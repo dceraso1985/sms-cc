@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { withTranslation, WithTranslation } from "react-i18next";
 import './statusTaskModule.scss';
-import { getSentNotification, exportNotification, createButtonClickLog } from '../../apis/messageListApi';
+import { getSentNotification, exportNotification } from '../../apis/messageListApi';
 import { RouteComponentProps } from 'react-router-dom';
 import * as AdaptiveCards from "adaptivecards";
 import { TooltipHost } from 'office-ui-fabric-react';
@@ -57,11 +57,6 @@ export interface IStatusState {
     teamId?: string;
 }
 
-export interface IButtonClickLog {
-    PartitionKey: string,
-    UserId: string,
-}
-
 interface StatusTaskModuleProps extends RouteComponentProps, WithTranslation { }
 
 class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusState> {
@@ -86,14 +81,6 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
             page: "ViewStatus",
             teamId: '',
         };
-    }
-
-    private createButtonClickLog = async (buttonClickLog: IButtonClickLog) => {
-        try {
-            await createButtonClickLog(buttonClickLog);
-        } catch (error) {
-            return error;
-        }
     }
 
     public componentDidMount() {
@@ -124,16 +111,7 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
                     let renderedCard = adaptiveCard.render();
                     document.getElementsByClassName('adaptiveCardContainer')[0].appendChild(renderedCard);
                     let link = this.state.message.buttonLink;
-                    adaptiveCard.onExecuteAction = async function (action)
-                    {
-                        try {
-                            await createButtonClickLog({ PartitionKey: '', UserId: '' });
-                        } catch (error) {
-                            return error;
-                        }
-
-                        window.open(link, '_blank');
-                    }
+                    adaptiveCard.onExecuteAction = function (action) { window.open(link, '_blank'); }
                 });
             });
         }
@@ -223,11 +201,6 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
                                         </Flex.Item>
                                         <Flex.Item>
                                             <TooltipHost content={!this.state.message.sendingCompleted ? "" : (this.state.message.canDownload ? "" : this.localize("ExportButtonProgressText"))} calloutProps={{ gapSpace: 0 }}>
-                                                <Button icon={<DownloadIcon size="medium" />} disabled={!this.state.message.canDownload || !this.state.message.sendingCompleted} content={this.localize("ExportButtonClicksText")} id="exportWithClicksBtn" onClick={this.onExportWithClicks} primary />
-                                            </TooltipHost>
-                                        </Flex.Item>
-                                        <Flex.Item>
-                                            <TooltipHost content={!this.state.message.sendingCompleted ? "" : (this.state.message.canDownload ? "" : this.localize("ExportButtonProgressText"))} calloutProps={{ gapSpace: 0 }}>
                                                 <Button icon={<DownloadIcon size="medium" />} disabled={!this.state.message.canDownload || !this.state.message.sendingCompleted} content={this.localize("ExportButtonText")} id="exportBtn" onClick={this.onExport} primary />
                                             </TooltipHost>
                                         </Flex.Item>
@@ -291,20 +264,6 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
     }
 
     private onExport = async () => {
-        let spanner = document.getElementsByClassName("sendingLoader");
-        spanner[0].classList.remove("hiddenLoader");
-        let payload = {
-            id: this.state.message.id,
-            teamId: this.state.teamId
-        };
-        await exportNotification(payload).then(() => {
-            this.setState({ page: "SuccessPage" });
-        }).catch(() => {
-            this.setState({ page: "ErrorPage" });
-        });
-    }
-
-    private onExportWithClicks = async () => {
         let spanner = document.getElementsByClassName("sendingLoader");
         spanner[0].classList.remove("hiddenLoader");
         let payload = {
