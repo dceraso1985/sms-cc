@@ -19,5 +19,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services
         /// <param name="partitionKey">Partition Key.</param>
         /// <returns>A task that represents the work queued to execute.</returns>
         public Task SaveButtonClickLogDataAsync(string userId, string partitionKey);
+
+   
     }
 }

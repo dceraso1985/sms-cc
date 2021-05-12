@@ -17,11 +17,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories
         public static readonly string TableName = "ButtonClickLogData";
 
         /// <summary>
-        /// Button Click Log partition key name.
-        /// </summary>
-        public static readonly string ButtonClickLogPartition = "ButtonClickLog";
-
-        /// <summary>
         /// App settings partition.
         /// </summary>
         public static readonly string SettingsPartition = "Settings";

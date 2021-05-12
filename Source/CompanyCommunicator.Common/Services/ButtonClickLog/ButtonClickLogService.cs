@@ -27,10 +27,14 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services
                 PartitionKey = partitionKey,
                 RowKey = ButtonClickLogTableName.ServiceUrlRowKey,
                 UserId = userId,
-                Timestamp = DateTime.Now
+                Timestamp = DateTime.Now 
             };
 
             await this.repository.InsertOrMergeAsync(buttonClickLog);
         }
+
+
+
+
     }
 }
